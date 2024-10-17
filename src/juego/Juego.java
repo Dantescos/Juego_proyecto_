@@ -1,5 +1,5 @@
 package juego;
-import java.awt.Color;
+
 import entorno.Entorno;
 import entorno.InterfaceJuego;
 
@@ -11,8 +11,8 @@ public class Juego extends InterfaceJuego {
         // Inicializa el objeto entorno
         this.entorno = new Entorno(this, "garcia mendez-rivero-gimenez", 800, 600);
         
-        // colocamos al prota en el centro
-        this.prota = new Prota(100, 500);
+        // Colocamos al prota en el centro
+        this.prota = new Prota(400, 300);
         
         // Inicia el juego
         this.entorno.iniciar();
@@ -36,27 +36,29 @@ public class Juego extends InterfaceJuego {
             this.prota.moverAbajo();
         }
 
-        // Disparar bolita con la barra espaciadora
+        // Disparo del corte con la barra espaciadora
         if (this.entorno.sePresiono(this.entorno.TECLA_ESPACIO)) {
             this.prota.dispararBolita();
         }
-
-        // Mover la bolita si existe
-        this.prota.moverBolita();
         
-        // Dibujar el Prota
-        this.entorno.dibujarTriangulo(
+       
+        this.entorno.dibujarImagen(
+            this.prota.getImagen(), 
             this.prota.getX(), 
             this.prota.getY(), 
-            40, 40, 
-            this.prota.getAngulo(), 
-            Color.GREEN
+            this.prota.getAngulo()
         );
-
-        // Dibujar la bolita si existe
+        
+        
+        this.prota.moverBolita();
         Prota.Bolita bolita = this.prota.getBolita();
         if (bolita != null) {
-            this.entorno.dibujarCirculo(bolita.getX(), bolita.getY(), 10, Color.RED);
+            this.entorno.dibujarImagen(
+                bolita.getImagenBolita(), 
+                bolita.getX(), 
+                bolita.getY(), 
+                0 
+            );
         }
     }
 
@@ -64,4 +66,5 @@ public class Juego extends InterfaceJuego {
         Juego juego = new Juego();
     }
 }
+
 
