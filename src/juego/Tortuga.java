@@ -13,9 +13,9 @@ public class Tortuga {
     public Tortuga(double x, double y) {
         this.x = x;
         this.y = y;
-        this.velocidad = 2; // Velocidad de movimiento de la tortuga
-        this.moviendoDerecha = true; // Comienza moviéndose a la derecha
-        this.imagen = new ImageIcon("imagenes/tortuga.png").getImage(); // Carga la imagen de la tortuga
+       
+        this.moviendoDerecha = true; // la tortuga comienza moviendose a la derecha
+        this.imagen = new ImageIcon("imagenes/tortuga.png").getImage(); 
     }
 
     public void mover() {
@@ -27,7 +27,7 @@ public class Tortuga {
     }
 
     public void cambiarDireccion() {
-        moviendoDerecha = !moviendoDerecha; // Cambia la dirección
+        moviendoDerecha = !moviendoDerecha; // cambia la dirección de la tortuga
     }
 
     public double getX() {
@@ -42,7 +42,7 @@ public class Tortuga {
         return this.imagen;
     }
 
-    // Verifica colisión con Pep
+    // Verifica  si colisiona con Pep
     public boolean colisionaCon(Prota prota) {
         // Simple lógica de colisión basada en coordenadas
         return this.x < prota.getX() + 50 && this.x + 50 > prota.getX() &&
