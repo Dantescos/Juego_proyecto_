@@ -17,11 +17,11 @@ public class Prota {
         this.y = y;
         this.angulo = 0; // Ángulo inicial
         this.imagen = new ImageIcon("imagenes/sukuna.png").getImage(); // Cargamos la imagen de sukuna
-        this.bolita = null; // el corte no existe al inicio
+        this.bolita = null; // La bolita no existe al inicio
         this.ultimaDireccion = ' '; // No hay dirección inicial
     }
 
-    // Movemos a nuestro sukuna
+    // Movemos al prota
     public void moverDerecha() {
         this.x += 5;
         this.ultimaDireccion = 'd'; // Actualiza la última dirección
@@ -46,7 +46,7 @@ public class Prota {
 
     // Método para disparar la bolita
     public void dispararBolita() {
-        if (this.bolita == null) { // Solo dispara si no hay un corte existente en pantalla
+        if (this.bolita == null) { // Solo dispara si no hay una bolita existente en pantalla
             // Si no hay dirección registrada, disparamos hacia la derecha por defecto
             if (this.ultimaDireccion == ' ') {
                 this.ultimaDireccion = 'd';
@@ -55,17 +55,17 @@ public class Prota {
         }
     }
 
-    // Método para que salga el corte
+    // Método para mover la bolita
     public void moverBolita() {
         if (this.bolita != null) {
             this.bolita.mover();
             if (this.bolita.fueraDePantalla()) { 
-                this.bolita = null; // Elimina el corte al salir de pantalla
+                this.bolita = null; // Elimina la bolita al salir de pantalla
             }
         }
     }
 
-    // Getter para la posición de sukuna
+    // Getters para la posición de Prota
     public double getX() {
         return this.x;
     }
@@ -85,57 +85,4 @@ public class Prota {
     public Image getImagen() {
         return this.imagen;
     }
-
-    // Clase interna del corte
-    public class Bolita {
-        private double x;
-        private double y;
-        private double velocidad;
-        private char direccionInicial; // Almacena la dirección inicial al disparar
-        private Image imagenBolita; // Imagen para el corte
-
-        public Bolita(double x, double y, char direccion) {
-            this.x = x;
-            this.y = y;
-            this.velocidad = 10;
-            this.direccionInicial = direccion;
-            this.imagenBolita = new ImageIcon("imagenes/corte_sukuna.png").getImage(); // Cargamos el corte
-        }
-
-        public void mover() {
-            // el corte se mueve siempre en la dirección inicial
-            switch (this.direccionInicial) {
-                case 'w':
-                    this.y -= velocidad;
-                    break;
-                case 's':
-                    this.y += velocidad;
-                    break;
-                case 'a':
-                    this.x -= velocidad;
-                    break;
-                case 'd':
-                    this.x += velocidad;
-                    break;
-            }
-        }
-
-        // Verifica si la el corte salie  de la pantalla
-        public boolean fueraDePantalla() {
-            return this.x < 0 || this.x > 800 || this.y < 0 || this.y > 600;
-        }
-
-        public double getX() {
-            return this.x;
-        }
-
-        public double getY() {
-            return this.y;
-        }
-
-        public Image getImagenBolita() {
-            return this.imagenBolita;
-        }
-    }
 }
-

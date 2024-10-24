@@ -1,9 +1,7 @@
 package juego;
 
-
 import entorno.Entorno;
 import entorno.InterfaceJuego;
-
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -24,7 +22,7 @@ public class Juego extends InterfaceJuego {
         this.entorno.iniciar();
         this.tortugas = new ArrayList<>();
         this.random = new Random();
-
+        
         // Generamos un número aleatorio de tortugas
         for (int i = 0; i < random.nextInt(3) + 2; i++) {
             double x = random.nextDouble() * 800; // Posición aleatoria en X
@@ -54,27 +52,20 @@ public class Juego extends InterfaceJuego {
         // Disparo del corte con la barra espaciadora
         if (this.entorno.sePresiono(this.entorno.TECLA_ESPACIO)) {
             this.prota.dispararBolita();
-           
         }
-        for (Tortuga tortuga : tortugas) {
-            tortuga.mover();
-            // cambia de dirección si alcanza los bordes
-            if (tortuga.getX() <= 0 || tortuga.getX() >= 800 - 50) {
-                tortuga.cambiarDireccion();
-            }
-            // verificar si colisiona con Pep
-            if (tortuga.colisionaCon(prota)) {
-                System.out.println("¡Pep ha sido aniquilado por una tortuga!");
-                // Lógica para perder el juego o restar vidas
-            }
-        }
-
-        // Dibujar tortugas
-        for (Tortuga tortuga : tortugas) {
-            this.entorno.dibujarImagen(tortuga.getImagen(), tortuga.getX(), tortuga.getY(), 0);
-        }    
         
-       
+        // Mover y dibujar tortugas
+        for (Tortuga tortuga : tortugas) {
+            tortuga.mover(); // Ahora las tortugas se mueven
+            this.entorno.dibujarImagen(tortuga.getImagen(), tortuga.getX(), tortuga.getY(), 0);
+            
+            // Colisión con el prota
+            if (tortuga.colisionaCon(prota)) {
+                System.out.println("¡Colisión con una tortuga!"); // Manejar la colisión
+            }
+        }
+        
+        // Dibujamos al prota
         this.entorno.dibujarImagen(
             this.prota.getImagen(), 
             this.prota.getX(), 
@@ -82,9 +73,9 @@ public class Juego extends InterfaceJuego {
             this.prota.getAngulo()
         );
         
-        
+        // Movemos y dibujamos el corte
         this.prota.moverBolita();
-        Prota.Bolita bolita = this.prota.getBolita();
+        Bolita bolita = this.prota.getBolita();
         if (bolita != null) {
             this.entorno.dibujarImagen(
                 bolita.getImagenBolita(), 
@@ -99,5 +90,4 @@ public class Juego extends InterfaceJuego {
         Juego juego = new Juego();
     }
 }
-
 

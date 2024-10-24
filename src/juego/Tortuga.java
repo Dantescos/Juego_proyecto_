@@ -1,10 +1,10 @@
 package juego;
-import java.awt.Image;
 
+import java.awt.Image;
 import javax.swing.ImageIcon;
 
 public class Tortuga {
-	private double x;
+    private double x;
     private double y;
     private double velocidad;
     private boolean moviendoDerecha;
@@ -13,16 +13,22 @@ public class Tortuga {
     public Tortuga(double x, double y) {
         this.x = x;
         this.y = y;
-       
+        this.velocidad = 2; // Inicializamos la velocidad
         this.moviendoDerecha = true; // la tortuga comienza moviendose a la derecha
-        this.imagen = new ImageIcon("imagenes/tortuga.png").getImage(); 
+        this.imagen = new ImageIcon("imagenes/itadori.png").getImage(); 
     }
 
     public void mover() {
+        // Mover en la dirección correcta
         if (moviendoDerecha) {
             x += velocidad;
         } else {
             x -= velocidad;
+        }
+        
+        // Cambiar de dirección si llega a los bordes de la pantalla
+        if (x <= 0 || x >= 750) {
+            cambiarDireccion();
         }
     }
 
@@ -42,9 +48,9 @@ public class Tortuga {
         return this.imagen;
     }
 
-    // Verifica  si colisiona con Pep
+    // Verifica si colisiona con el prota
     public boolean colisionaCon(Prota prota) {
-        // Simple lógica de colisión basada en coordenadas
+        // Lógica de colisión simple basada en coordenadas
         return this.x < prota.getX() + 50 && this.x + 50 > prota.getX() &&
                this.y < prota.getY() + 50 && this.y + 50 > prota.getY();
     }
