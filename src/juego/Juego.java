@@ -58,10 +58,8 @@ public class Juego extends InterfaceJuego {
 		plataformas.add(new Plataforma(402, 500, 135, 20));
 		plataformas.add(new Plataforma(565, 500, 135, 20));
 		plataformas.add(new Plataforma(735, 500, 135, 20));
-	}
+    }
         
-    
-
     public void tick() {
         // Manejo de movimiento del Prota
         if (this.entorno.estaPresionada('d')) {
@@ -73,8 +71,7 @@ public class Juego extends InterfaceJuego {
         if (this.entorno.estaPresionada('w')) {
             this.prota.moverArriba();
         }
-        
-       
+
         if (this.entorno.estaPresionada('s')) {
             this.prota.mostrarFukumaMizushi(); // Muestra Fukuma Mizushi al presionar 's'
         } else {
@@ -86,41 +83,49 @@ public class Juego extends InterfaceJuego {
         }
 
         if (this.entorno.estaPresionada('w')) {
-			this.prota.saltar(); // Llama al método saltar
-		}
+            this.prota.saltar(); // Llama al método saltar
+        }
 
-		this.prota.aplicarGravedad(); // Aplica la gravedad en cada frame
+        this.prota.aplicarGravedad(); // Aplica la gravedad en cada frame
 
-        
+        // Verifica colisiones con plataformas
+        for (Plataforma p : plataformas) {
+            if (p.colisionaCon(this.prota)) {
+                // Detiene la caída y ajusta la posición del Prota
+                this.prota.detenerCaida(p.getY());
+            }
+        }
+
+        // Dibuja las plataformas
+        for (Plataforma p : plataformas) {
+            p.dibujar(entorno); // Asegúrate de que este método esté definido en la clase Plataforma
+        }
+
         // Dibuja Fukuma Mizushi detrás de Prota si es visible
         if (this.prota.isFukumaVisible()) {
             this.entorno.dibujarImagen(this.prota.getFukumaMizushiImagen(), this.prota.getX(), this.prota.getY(), 0);
         }
 
-    
         this.entorno.dibujarImagen(this.prota.getImagen(), this.prota.getX(), this.prota.getY(), this.prota.getAngulo());
 
-       
+        // Mueve y dibuja las tortugas
         for (Tortuga tortuga : tortugas) {
             tortuga.mover(); 
             this.entorno.dibujarImagen(tortuga.getImagen(), tortuga.getX(), tortuga.getY(), 0);
             
-           
+            // Verifica colisiones con tortugas
             if (tortuga.colisionaCon(prota)) {
                 System.out.println("¡Colisión con una tortuga!");
             }
-        }
-        
-        
-		// Dibujar y manejar las plataformas
-		for (Plataforma p : plataformas) {
-			p.dibujar(entorno);
 
-			if (p.colisionaCon(this.prota)) {
-				System.out.println("¡Colisión con la plataforma!");
-				// Aquí puedes manejar lo que sucede cuando hay una colisión
-			}
-		}
+            // Verifica colisiones con plataformas
+            for (Plataforma p : plataformas) {
+                if (p.colisionaCon(tortuga)) {
+                    tortuga.detenerCaida(p.getY()); // Detiene la caída si colisiona con una plataforma
+                    break; // Sale del bucle si ya colisionó
+                }
+            }
+        }
 
         // Mueve y dibuja la bolita
         this.prota.moverBolita();
@@ -134,5 +139,3 @@ public class Juego extends InterfaceJuego {
         Juego juego = new Juego();
     }
 }
-
-
