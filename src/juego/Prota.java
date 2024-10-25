@@ -13,6 +13,12 @@ public class Prota {
     private char ultimaDireccion; // Para almacenar la última dirección de movimiento
     private boolean fukumaVisible; // Para controlar la visibilidad de Fukuma Mizushi
 
+    //Atributos para el salto y gravedad
+    private double velocidadY; // Velocidad vertical (para el salto y la gravedad)
+    private final double GRAVEDAD = 0.5; // Gravedad constante
+    private boolean enElAire; // Indica si el personaje está en el aire o no
+
+    
     // Inicializamos al prota con la imagen
     public Prota(double x, double y) {
         this.x = x;
@@ -20,7 +26,7 @@ public class Prota {
         this.angulo = 0; // Ángulo inicial
         this.fukumaMizushiImagen = new ImageIcon("imagenes/fukuma_mizushi.png").getImage(); // Cargamos la imagen de Fukuma Mizushi
         this.imagen = new ImageIcon("imagenes/sukuna.png").getImage(); // Cargamos la imagen de sukuna
-      
+        this.enElAire = false; // Inicia en el suelo
         this.bolita = null; // La bolita no existe al inicio
         this.ultimaDireccion = ' '; // No hay dirección inicial
         this.fukumaVisible = false; // Fukuma Mizushi no es visible al inicio
@@ -59,6 +65,12 @@ public class Prota {
             this.bolita = new Bolita(this.x, this.y, this.ultimaDireccion);
         }
     }
+    public void saltar() {
+        if (!enElAire) { // Solo salta si está en el suelo
+            this.velocidadY = -10; // Velocidad de salto (hacia arriba)
+            this.enElAire = true; // Ahora está en el aire
+        }
+    }
 
     // Método para mover la bolita
     public void moverBolita() {
@@ -69,6 +81,20 @@ public class Prota {
             }
         }
     }
+    public void aplicarGravedad() {
+        if (enElAire) {
+            this.velocidadY += GRAVEDAD; // Aumenta la velocidad de caída
+            this.y += velocidadY; // Actualiza la posición vertical
+        }
+    }
+    
+    public void detenerCaida(double yPlataforma) {
+        this.y = yPlataforma - 20; // Ajustamos al Prota sobre la plataforma (20 es la altura del personaje)
+        this.velocidadY = 0; // Detenemos la velocidad vertical
+        this.enElAire = false; // Está en el suelo
+    }
+    
+    
 
     // Método para mostrar Fukuma Mizushi
     public void mostrarFukumaMizushi() {
