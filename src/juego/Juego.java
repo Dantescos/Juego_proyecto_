@@ -3,6 +3,7 @@ package juego;
 import entorno.Entorno;
 import entorno.InterfaceJuego;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Random;
 
 public class Juego extends InterfaceJuego {
@@ -33,31 +34,31 @@ public class Juego extends InterfaceJuego {
         
         this.plataformas = new ArrayList<>();
 
-		// Definir plataformas para una pantalla de 800x600
-		// Primera fila (una plataforma)
-		plataformas.add(new Plataforma(400, 100, 150, 20)); // Centro superior
+        // Definir plataformas para una pantalla de 800x600
+        // Primera fila (una plataforma)
+        plataformas.add(new Plataforma(400, 100, 150, 20)); // Centro superior
 
-		// Segunda fila (dos plataformas)
-		plataformas.add(new Plataforma(250, 200, 150, 20));
-		plataformas.add(new Plataforma(550, 200, 150, 20));
+        // Segunda fila (dos plataformas)
+        plataformas.add(new Plataforma(250, 200, 150, 20));
+        plataformas.add(new Plataforma(550, 200, 150, 20));
 
-		// Tercera fila (tres plataformas)
-		plataformas.add(new Plataforma(150, 300, 150, 20));
-		plataformas.add(new Plataforma(400, 300, 150, 20));
-		plataformas.add(new Plataforma(650, 300, 150, 20));
+        // Tercera fila (tres plataformas)
+        plataformas.add(new Plataforma(150, 300, 150, 20));
+        plataformas.add(new Plataforma(400, 300, 150, 20));
+        plataformas.add(new Plataforma(650, 300, 150, 20));
 
-		// Cuarta fila (cuatro plataformas)
-		plataformas.add(new Plataforma(100, 400, 150, 20));
-		plataformas.add(new Plataforma(300, 400, 150, 20));
-		plataformas.add(new Plataforma(500, 400, 150, 20));
-		plataformas.add(new Plataforma(700, 400, 150, 20));
+        // Cuarta fila (cuatro plataformas)
+        plataformas.add(new Plataforma(100, 400, 150, 20));
+        plataformas.add(new Plataforma(300, 400, 150, 20));
+        plataformas.add(new Plataforma(500, 400, 150, 20));
+        plataformas.add(new Plataforma(700, 400, 150, 20));
 
-		// Quinta fila (cinco plataformas)
-		plataformas.add(new Plataforma(70, 500, 140, 20));
-		plataformas.add(new Plataforma(245, 500, 135, 20));
-		plataformas.add(new Plataforma(402, 500, 135, 20));
-		plataformas.add(new Plataforma(565, 500, 135, 20));
-		plataformas.add(new Plataforma(735, 500, 135, 20));
+        // Quinta fila (cinco plataformas)
+        plataformas.add(new Plataforma(70, 500, 140, 20));
+        plataformas.add(new Plataforma(245, 500, 135, 20));
+        plataformas.add(new Plataforma(402, 500, 135, 20));
+        plataformas.add(new Plataforma(565, 500, 135, 20));
+        plataformas.add(new Plataforma(735, 500, 135, 20));
     }
         
     public void tick() {
@@ -86,7 +87,7 @@ public class Juego extends InterfaceJuego {
             this.prota.saltar(); // Llama al método saltar
         }
 
-        this.prota.aplicarGravedad(); // Aplica la gravedad en cada frame
+        this.prota.aplicarGravedad(); 
 
         // Verifica colisiones con plataformas
         for (Plataforma p : plataformas) {
@@ -96,12 +97,12 @@ public class Juego extends InterfaceJuego {
             }
         }
 
-        // Dibuja las plataformas
+        
         for (Plataforma p : plataformas) {
-            p.dibujar(entorno); // Asegúrate de que este método esté definido en la clase Plataforma
+            p.dibujar(entorno); 
         }
 
-        // Dibuja Fukuma Mizushi detrás de Prota si es visible
+        
         if (this.prota.isFukumaVisible()) {
             this.entorno.dibujarImagen(this.prota.getFukumaMizushiImagen(), this.prota.getX(), this.prota.getY(), 0);
         }
@@ -109,7 +110,9 @@ public class Juego extends InterfaceJuego {
         this.entorno.dibujarImagen(this.prota.getImagen(), this.prota.getX(), this.prota.getY(), this.prota.getAngulo());
 
         // Mueve y dibuja las tortugas
-        for (Tortuga tortuga : tortugas) {
+        Iterator<Tortuga> iterator = tortugas.iterator();
+        while (iterator.hasNext()) {
+            Tortuga tortuga = iterator.next();
             tortuga.mover(); 
             this.entorno.dibujarImagen(tortuga.getImagen(), tortuga.getX(), tortuga.getY(), 0);
             
@@ -132,7 +135,24 @@ public class Juego extends InterfaceJuego {
         Bolita bolita = this.prota.getBolita();
         if (bolita != null) {
             this.entorno.dibujarImagen(bolita.getImagenBolita(), bolita.getX(), bolita.getY(), 0);
+            
+            // Verifica colisiones entre la bolita y cada tortuga
+            Iterator<Tortuga> iter = tortugas.iterator();
+            while (iter.hasNext()) {
+                Tortuga tortuga = iter.next();
+                if (colisiona(bolita, tortuga)) {
+                    // Si hay colisión, elimina la tortuga de la lista
+                    iter.remove();
+                }
+            }
         }
+    }
+
+    // Método para verificar colisión entre la Bolita y una Tortuga
+    private boolean colisiona(Bolita bolita, Tortuga tortuga) {
+        // Ajusta los tamaños de colisión según el tamaño de la bolita y la tortuga
+        return bolita.getX() < tortuga.getX() + 50 && bolita.getX() + 20 > tortuga.getX() &&
+               bolita.getY() < tortuga.getY() + 50 && bolita.getY() + 20 > tortuga.getY();
     }
 
     public static void main(String[] args) {

@@ -31,7 +31,7 @@ public class Prota {
         this.fukumaVisible = false; // Fukuma Mizushi no es visible al inicio
     }
 
-    // Movemos al prota
+    
     public void moverDerecha() {
         this.x += 5;
         this.ultimaDireccion = 'd'; // Actualiza la última dirección
@@ -72,7 +72,7 @@ public class Prota {
         }
     }
 
-    // Método para mover la bolita
+  
     public void moverBolita() {
         if (this.bolita != null) {
             this.bolita.mover();
@@ -91,7 +91,7 @@ public class Prota {
     
     // Método para detener la caída al colisionar con una plataforma
     public void detenerCaida(double yPlataforma) {
-        this.y = yPlataforma - 20; // Ajustamos al Prota sobre la plataforma (20 es la altura del personaje)
+        this.y = yPlataforma - 20; 
         this.velocidadY = 0; // Detenemos la velocidad vertical
         this.enElAire = false; // Está en el suelo
     }
