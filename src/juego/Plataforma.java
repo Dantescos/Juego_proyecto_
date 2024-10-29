@@ -33,6 +33,13 @@ public class Plataforma {
                tortuga.getY() + 20 >= this.y - this.alto / 2 && // margen de colisión vertical
                tortuga.getY() <= this.y + this.alto / 2;
     }
+    
+    public boolean colisionaCon(Gojos gojo) {
+        return gojo.getX() < this.x + this.ancho / 2 && 
+               gojo.getX() + 50 > this.x - this.ancho / 2 && // Ajusta el ancho
+               gojo.getY() < this.y + this.alto / 2 &&
+               gojo.getY() + 50 > this.y - this.alto / 2; // Ajusta el alto
+    }
 
    
     public double getX() {

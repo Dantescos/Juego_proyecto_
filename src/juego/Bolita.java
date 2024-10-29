@@ -13,7 +13,7 @@ public class Bolita {
     public Bolita(double x, double y, char direccion) {
         this.x = x;
         this.y = y;
-        this.velocidad = 10;
+        this.velocidad = 4;
         this.direccionInicial = direccion;
         this.imagenBolita = new ImageIcon("imagenes/corte_sukuna.png").getImage(); // Cargamos la imagen
     }
