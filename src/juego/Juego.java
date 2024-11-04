@@ -1,5 +1,13 @@
 package juego;
 
+import java.awt.Image;
+
+import javax.swing.ImageIcon;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import java.io.File;
+import java.io.IOException;
 import entorno.Entorno;
 import entorno.InterfaceJuego;
 import java.util.ArrayList;
@@ -9,10 +17,12 @@ import java.util.Random;
 public class Juego extends InterfaceJuego {
     private Entorno entorno;
     private Prota prota;
+    private Image fondo;
     private ArrayList<Tortuga> tortugas;
     private ArrayList<Gojos> gojos;
     private Random random;
     private ArrayList<Plataforma> plataformas;
+    
     private int contadorGojos = 0;
     private double tiempoEntreApariciones = 120;
     private double tiempoTranscurrido = 0;
@@ -30,6 +40,7 @@ public class Juego extends InterfaceJuego {
         
         // Inicia el juego
         this.entorno.iniciar();
+        this.fondo = new ImageIcon("imagenes/fukuma_fondo.jpg").getImage();
         
         this.tortugas = new ArrayList<>();
         this.gojos = new ArrayList<>();
@@ -64,11 +75,24 @@ public class Juego extends InterfaceJuego {
         plataformas.add(new Plataforma(565, 500, 135, 20));
         plataformas.add(new Plataforma(735, 500, 135, 20));
     }
-
+    
+    private void reproducirMusicaDeFondo(String nombreArchivo) throws Exception {
+   
+    	AudioInputStream audioStream = AudioSystem.getAudioInputStream(new File("Audio/Jujutsu-Kaisen-Opening.wav"));
+        Clip clip = AudioSystem.getClip();
+        clip.open(audioStream);
+        clip.loop(Clip.LOOP_CONTINUOUSLY); 
+        clip.start(); 
+        
+        	
+        }
+        	
+        
+    
     public void tick() {
         // Temporizador
         tiempoRestante -= 1.0 / 60.0;
-
+        this.entorno.dibujarImagen(fondo, 400, 300, 0);
         // Movimiento del Prota
         if (this.entorno.estaPresionada('d')) {
             this.prota.moverDerecha();
@@ -91,13 +115,14 @@ public class Juego extends InterfaceJuego {
             this.prota.saltar();
         }
         this.prota.aplicarGravedad();
+        this.prota.aplicarGravedadEnSuelo();
 
         // Colisiones con plataformas
         for (Plataforma p : plataformas) {
             if (p.colisionaCon(this.prota)) {
                 this.prota.detenerCaida(p.getY());
             }
-        }
+        }      
 
         // Dibuja plataformas
         for (Plataforma p : plataformas) {

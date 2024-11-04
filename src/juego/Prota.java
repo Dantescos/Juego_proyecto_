@@ -17,6 +17,7 @@ public class Prota {
     private double velocidadY; // Velocidad vertical (para el salto y la gravedad)
     private final double GRAVEDAD = 0.5; // Gravedad constante
     private boolean enElAire; // Indica si el personaje está en el aire
+    private boolean enElSuelo; // Indica si el personaje está en el suelo
 
     // Inicializamos al prota con la imagen
     public Prota(double x, double y) {
@@ -26,6 +27,7 @@ public class Prota {
         this.fukumaMizushiImagen = new ImageIcon("imagenes/fukuma_mizushi.png").getImage(); // Cargamos la imagen de Fukuma Mizushi
         this.imagen = new ImageIcon("imagenes/sukuna.png").getImage(); // Cargamos la imagen de sukuna
         this.enElAire = false; // Inicia en el suelo
+        this.enElSuelo = false; //
         this.bolita = null; // La bolita no existe al inicio
         this.ultimaDireccion = ' '; // No hay dirección inicial
         this.fukumaVisible = false; // Fukuma Mizushi no es visible al inicio
@@ -84,6 +86,13 @@ public class Prota {
 
     public void aplicarGravedad() {
         if (enElAire) {
+            this.velocidadY += GRAVEDAD; // Aumenta la velocidad de caída
+            this.y += velocidadY; // Actualiza la posición vertical
+        }
+    }
+    
+    public void aplicarGravedadEnSuelo() {
+    	if (!enElSuelo) {
             this.velocidadY += GRAVEDAD; // Aumenta la velocidad de caída
             this.y += velocidadY; // Actualiza la posición vertical
         }
