@@ -19,9 +19,13 @@ public class Juego extends InterfaceJuego {
     private Prota prota;
     private Image fondo;
     private Tortuga[] tortugas ;
-    private ArrayList<Gojos> gojos;
+    private Gojos[] gojos;
     private Random random;
     private ArrayList<Plataforma> plataformas;
+    private int gojosPerdidos = 0;
+    private int contadorTortugas = 0; // Contador para el manejo de tortugas
+    private double tiempoEntreAparicionesTortugas = 180; // Tiempo entre apariciones de tortugas
+    private double tiempoTranscurridoTortugas = 0; // Contador de tiempo para tortugas
     
     private int contadorGojos = 0;
     private double tiempoEntreApariciones = 120;
@@ -42,17 +46,14 @@ public class Juego extends InterfaceJuego {
         this.entorno.iniciar();
         this.fondo = new ImageIcon("imagenes/fukuma_fondo.jpg").getImage();
         
-        this.tortugas = new Tortuga[2];
+
         // Inicia las tortugas con posiciones iniciales
-        this.tortugas[0] = new Tortuga(100, 100); // La primera tortuga en la posición (100, 100)
-        this.tortugas[1] = new Tortuga(500, 100); // La segunda tortuga en la posición (500, 100)
-        this.gojos = new ArrayList<>();
+        this.tortugas = new Tortuga[5];
+        this.gojos = new Gojos[5];
         this.random = new Random();
         
        
-        
-        // Agrega un Gojo en la posición específica (30, 450) cuando inicie el juego
-        gojos.add(new Gojos(400, 600));
+       
 
         this.plataformas = new ArrayList<>();
         
@@ -91,6 +92,7 @@ public class Juego extends InterfaceJuego {
         // Temporizador
         tiempoRestante -= 1.0 / 60.0;
         this.entorno.dibujarImagen(fondo, 400, 300, 0);
+        
         // Movimiento del Prota
         if (this.entorno.estaPresionada('d')) {
             this.prota.moverDerecha();
@@ -108,13 +110,30 @@ public class Juego extends InterfaceJuego {
         }
         if (this.entorno.sePresiono(this.entorno.TECLA_ESPACIO)) {
             this.prota.dispararBolita();
+            
+            
         }
+        
+        
+        
         if (this.entorno.estaPresionada('w')) {
             this.prota.saltar();
         }
         this.prota.aplicarGravedad();
         this.prota.aplicarGravedadEnSuelo();
-
+        tiempoTranscurridoTortugas++;
+        
+        if (tiempoTranscurridoTortugas >= tiempoEntreAparicionesTortugas) {
+            for (int i = 0; i < tortugas.length; i++) {
+                if (tortugas[i] == null) { // Encuentra un espacio vacío
+                    tortugas[i] = new Tortuga(random.nextInt(800), random.nextInt(600));
+                    contadorTortugas++;
+                    tiempoTranscurridoTortugas = 0;
+                    break;
+                }
+            }
+        }
+        
         // Colisiones con plataformas
         for (Plataforma p : plataformas) {
             if (p.colisionaCon(this.prota)) {
@@ -136,7 +155,7 @@ public class Juego extends InterfaceJuego {
         for (int i = 0; i < tortugas.length; i++) {
             Tortuga tortuga = tortugas[i];
             if (tortuga != null) {
-                tortuga.mover();  // Mueve la tortuga
+                tortuga.mover();
                 if (tortuga.getImagen() != null) {
                     this.entorno.dibujarImagen(tortuga.getImagen(), tortuga.getX(), tortuga.getY(), 0);
                 }
@@ -150,42 +169,63 @@ public class Juego extends InterfaceJuego {
                 for (Plataforma p : plataformas) {
                     if (p.colisionaCon(tortuga)) {
                         tortuga.detenerCaida(p.getY());
-                        break; // Detiene la búsqueda de colisiones después de la primera
+                        break;
                     }
                 }
             }
         }
         // Aparición de nuevos Gojos
         tiempoTranscurrido++;
-        if (tiempoTranscurrido >= tiempoEntreApariciones && contadorGojos < 5) {
-            gojos.add(new Gojos(400, 600));
-            contadorGojos++;
-            tiempoTranscurrido = 0;
-        }
-
-        // Mueve y dibuja los Gojos
-        Iterator<Gojos> iteratorGojo = gojos.iterator();
-        while (iteratorGojo.hasNext()) {
-            Gojos gojo = iteratorGojo.next();
-            gojo.mover();
-            if (gojo.getImagen() != null) {
-                this.entorno.dibujarImagen(gojo.getImagen(), gojo.getX(), gojo.getY(), 0);
-            }
-
-            if (gojo.colisionaCon(prota)) {
-                System.out.println("¡Colisión con un Gojo!");
-                marcadorGojos++;
-                iteratorGojo.remove();
-            }
-
-            for (Plataforma p : plataformas) {
-                if (p.colisionaCon(gojo)) {
-                    gojo.detenerCaida(p.getY());
+        if (tiempoTranscurrido >= tiempoEntreApariciones) {
+            for (int i = 0; i < gojos.length; i++) {
+                if (gojos[i] == null) { // Encuentra un espacio vacío
+                    gojos[i] = new Gojos(400, 600);
+                    contadorGojos++;
+                    tiempoTranscurrido = 0;
                     break;
                 }
             }
         }
 
+
+        
+        for (int i = 0; i < gojos.length; i++) {
+            Gojos gojo = gojos[i];
+            if (gojo != null) {
+                gojo.mover();
+                if (gojo.getImagen() != null) {
+                    this.entorno.dibujarImagen(gojo.getImagen(), gojo.getX(), gojo.getY(), 0);
+                }
+
+                // Verifica colisión con el Prota
+                if (gojo.colisionaCon(prota)) {
+                    
+                    marcadorGojos++;
+                    gojos[i] = null; 
+                }
+
+                // Verifica colisión con una Tortuga
+                for (int j = 0; j < tortugas.length; j++) {
+                    Tortuga tortuga = tortugas[j];
+                    if (tortuga != null && colisiona(gojo, tortuga)) {
+                        gojos[i] = null; 
+                        gojosPerdidos++;
+                        break; 
+                    }
+                }
+
+                // Verifica colisión con plataformas
+                for (Plataforma p : plataformas) {
+                    if (p.colisionaCon(gojo)) {
+                        gojo.detenerCaida(p.getY());
+                        break;
+                    }
+                }
+            }
+        }
+
+
+    
      // Mueve y dibuja la bolita
         this.prota.moverBolita();
         Bolita bolita = this.prota.getBolita();
@@ -195,31 +235,44 @@ public class Juego extends InterfaceJuego {
             // Itera sobre las tortugas en el arreglo
             for (int i = 0; i < tortugas.length; i++) {
                 Tortuga tortuga = tortugas[i];
-                if (colisiona(bolita, tortuga)) {
-                    // Remueve la tortuga del arreglo y actualiza el marcador
-                    // Si estás usando un arreglo fijo, es más complicado remover elementos directamente.
-                    // Una forma sería mover la tortuga a una posición "vacía" o usar un marcador para contar.
-                    tortugas[i] = null; // Marca la tortuga como eliminada
-                    marcadorTortugas++;
+                if (tortuga != null && colisiona(bolita, tortuga)) {
+        
+                    tortugas[i] = null;
+                    marcadorTortugas++; 
+                    this.prota.setBolita(null); 
+                    break; 
                 }
             }
         }
+
+
 
         // Dibuja marcadores y temporizador
         this.entorno.cambiarFont("Georgia", 18, java.awt.Color.WHITE);
         this.entorno.escribirTexto("Itadoris Cortados: " + marcadorTortugas, 10, 20);
         this.entorno.escribirTexto("Gojos comidos: " + marcadorGojos, 10, 40);
+        this.entorno.escribirTexto("Gojos Perdidos: " + gojosPerdidos, 10, 80);
         this.entorno.escribirTexto("Tiempo restante: " + (int) tiempoRestante + " segundos", 10, 60);
     }
 
     // Método para verificar colisión entre la Bolita y una Tortuga
     private boolean colisiona(Bolita bolita, Tortuga tortuga) {
-        return bolita.getX() < tortuga.getX() + 50 && bolita.getX() + 20 > tortuga.getX() &&
-               bolita.getY() < tortuga.getY() + 50 && bolita.getY() + 20 > tortuga.getY();
+        return bolita.getX() < tortuga.getX() + 50 && bolita.getX() + 50 > tortuga.getX() &&
+               bolita.getY() < tortuga.getY() + 50 && bolita.getY() + 50 > tortuga.getY();
+    }
+    
+    private boolean colisiona(Gojos gojo, Tortuga tortuga) {
+        return gojo.getX() < tortuga.getX() + 50 && gojo.getX() + 50 > tortuga.getX() &&
+               gojo.getY() < tortuga.getY() + 50 && gojo.getY() + 50 > tortuga.getY();
     }
 
     public static void main(String[] args) {
         Juego juego = new Juego();
+        try {
+            juego.reproducirMusicaDeFondo("Jujutsu-Kaisen-Opening.wav");
+        } catch (Exception e) {
+            System.out.println("Error al reproducir el archivo de audio");
+        }
     }
 }
 

@@ -141,6 +141,12 @@ public class Prota {
         return this.fukumaMizushiImagen;
     }
 
+ // En la clase Prota
+    public void setBolita(Bolita bolita) {
+        this.bolita = bolita;
+    }
+
+    
     // Método para verificar si Fukuma Mizushi es visible
     public boolean isFukumaVisible() {
         return this.fukumaVisible;
